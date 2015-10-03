@@ -3,12 +3,16 @@ package ass2.spec;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLJPanel;
+import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
+
 import com.jogamp.opengl.util.FPSAnimator;
 
 
@@ -56,16 +60,60 @@ public class Game extends JFrame implements GLEventListener{
      * @throws FileNotFoundException
      */
     public static void main(String[] args) throws FileNotFoundException {
-        Terrain terrain = LevelIO.load(new File(args[0]));
+    	Terrain terrain = LevelIO.load(new File(args[0]));
         Game game = new Game(terrain);
         game.run();
     }
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		// TODO Auto-generated method stub
+		GL2 gl = drawable.getGL().getGL2();
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glLoadIdentity();
+		// do stuff with camera
+		gl.glRotated(180, 0, 1, 0);
+		gl.glTranslated(0, -3, 8);
+		// draw the terrain
+		drawTerrain(gl);
+		
 		
 	}
+	
+	
+	
+	private void drawTerrain(GL2 gl) {
+		int width = (int)myTerrain.size().getWidth();
+		int height = (int)myTerrain.size().getHeight();
+		gl.glColor4d(1, 1, 1, 1);
+
+		double altitude;
+		gl.glBegin(GL2.GL_TRIANGLES); {
+		    for (int z = height - 1; z > 0; z--) {
+				for (int x = width - 1; x > 0; x--) {
+					// draw first triangle
+					altitude = myTerrain.getGridAltitude(x, z);
+					gl.glVertex3d(x, altitude, z);
+					altitude = myTerrain.getGridAltitude(x-1,z);
+					gl.glVertex3d(x-1, altitude, z);
+					altitude = myTerrain.getGridAltitude(x-1,z-1);
+					gl.glVertex3d(x-1, altitude, z-1);
+					
+					// draw second triangle
+					altitude = myTerrain.getGridAltitude(x,z);
+					gl.glVertex3d(x, altitude, z);
+					altitude = myTerrain.getGridAltitude(x-1,z-1);
+					gl.glVertex3d(x-1, altitude, z-1);
+					altitude = myTerrain.getGridAltitude(x,z-1);
+					gl.glVertex3d(x, altitude, z-1);
+					
+
+				}
+			}
+		}
+		gl.glEnd();
+	}
+	
 
 	@Override
 	public void dispose(GLAutoDrawable drawable) {
@@ -75,14 +123,19 @@ public class Game extends JFrame implements GLEventListener{
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		// TODO Auto-generated method stub
-		
+        GL2 gl = drawable.getGL().getGL2();	
+    	//gl.glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+
 	}
 
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
 			int height) {
-		// TODO Auto-generated method stub
+		GL2 gl = drawable.getGL().getGL2();
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glLoadIdentity();
+		GLU glu = new GLU();
+		glu.gluPerspective(60,1,1,100);
 		
 	}
 }
