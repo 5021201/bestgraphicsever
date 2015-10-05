@@ -111,7 +111,7 @@ public class Game extends JFrame implements GLEventListener{
 			}
 		}
 		gl.glEnd();
-		for(Tree t : myTerrain.trees()) {
+		for(Tree t : myTerrain.trees()){
         	t.draw(gl);
         }
 	}
