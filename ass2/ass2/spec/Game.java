@@ -16,13 +16,12 @@ import javax.swing.JFrame;
 import com.jogamp.opengl.util.FPSAnimator;
 
 
-
 /**
  * COMMENT: Comment Game 
  *
  * @author malcolmr
  */
-public class Game extends JFrame implements GLEventListener{
+public class Game extends JFrame implements GLEventListener, KeyListener {
 
     private Terrain myTerrain;
 
@@ -140,4 +139,20 @@ public class Game extends JFrame implements GLEventListener{
 		glu.gluPerspective(60,1,1,100);
 		
 	}
+	
+    @Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		 switch (e.getKeyCode()) {  
+		 	case KeyEvent.VK_UP:
+            
+		 	case KeyEvent.VK_DOWN:
+			     
+				  angle = (angle - 10) % 360;
+				  break;		
+		 default:
+			 break;
+		 }
+		 System.out.println(angle);
+    }
 }
