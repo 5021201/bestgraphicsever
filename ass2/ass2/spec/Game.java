@@ -13,7 +13,10 @@ import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.KeyListener;
 import com.jogamp.opengl.util.FPSAnimator;
+import com.jogamp.opengl.util.gl2.GLUT;
 
 
 /**
@@ -110,11 +113,31 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 			}
 		}
 		gl.glEnd();
-		for(Tree t : myTerrain.trees()) {
-        	t.draw(gl);
-        }
+    	drawTrees(gl);
 	}
 	
+	public void drawTrees (GL2 gl) { 
+		for(Tree t : myTerrain.trees()) {
+			gl.glPushMatrix();
+	    	double[] position = t.getPosition();
+	    	
+	    	GLU glu = new GLU();
+		    GLUT glut = new GLUT();
+			
+		    gl.glTranslated (position[0], position[1],  position[2]);    	    
+		    gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
+	
+	        gl.glRotated(270, 1, 0, 0);  
+	        glut.glutSolidCylinder(0.2,1.2,24,24); 
+	        
+		    gl.glTranslated(0,0,1.2);  
+		    glut.glutSolidSphere(0.55, 24, 24);
+	
+	
+		    
+		    gl.glPopMatrix();
+		}
+    }
 
 	@Override
 	public void dispose(GLAutoDrawable drawable) {
@@ -142,17 +165,24 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 	
     @Override
 	public void keyPressed(KeyEvent e) {
+		int angle = 100;
 		// TODO Auto-generated method stub
 		 switch (e.getKeyCode()) {  
 		 	case KeyEvent.VK_UP:
             
 		 	case KeyEvent.VK_DOWN:
 			     
-				  angle = (angle - 10) % 360;
+				  angle  = (angle - 10) % 360;
 				  break;		
 		 default:
 			 break;
 		 }
 		 System.out.println(angle);
     }
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 }

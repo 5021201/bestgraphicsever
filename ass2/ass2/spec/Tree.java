@@ -26,24 +26,6 @@ public class Tree {
         return myPos;
     }
     
-    public void draw(GL2 gl) { 
-    	gl.glPushMatrix();
-    	
-    	GLU glu = new GLU();
-	    GLUT glut = new GLUT();
-		
-	    gl.glTranslated (myPos[0], myPos[1],  myPos[2]);    	    
-	    gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
-
-        gl.glRotated(270, 1, 0, 0);  
-        glut.glutSolidCylinder(0.2,1.2,24,24); 
-        
-	    gl.glTranslated(0,0,1.2);  
-	    glut.glutSolidSphere(0.55, 24, 24);
-
-
-	    
-	    gl.glPopMatrix();
-}
+    
 
 }
