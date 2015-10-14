@@ -13,8 +13,8 @@ import javax.media.opengl.awt.GLJPanel;
 import javax.media.opengl.glu.GLU;
 import javax.swing.JFrame;
 
-import com.jogamp.newt.event.KeyEvent;
-import com.jogamp.newt.event.KeyListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import com.jogamp.opengl.util.FPSAnimator;
 import com.jogamp.opengl.util.gl2.GLUT;
 
@@ -27,6 +27,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 public class Game extends JFrame implements GLEventListener, KeyListener {
 
     private Terrain myTerrain;
+    private Camera camera;
 
     public Game(Terrain terrain) {
     	super("Assignment 2");
