@@ -31,6 +31,7 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
     public Game(Terrain terrain) {
     	super("Assignment 2");
         myTerrain = terrain;
+        camera = new Camera(myTerrain);
     }
     
     /** 
@@ -47,11 +48,13 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
           FPSAnimator animator = new FPSAnimator(60);
           animator.add(panel);
           animator.start();
-
+          panel.addKeyListener(this);
+          // the panel needs to be focusable to get key events
+          panel.setFocusable(true);   
           getContentPane().add(panel);
           setSize(800, 600);        
           setVisible(true);
-          setDefaultCloseOperation(EXIT_ON_CLOSE);        
+          setDefaultCloseOperation(EXIT_ON_CLOSE);       
     }
     
     /**
@@ -70,15 +73,19 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 	public void display(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+		
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		// do stuff with camera
-		gl.glRotated(180, 0, 1, 0);
-		gl.glTranslated(0, -3, 8);
+
+		gl.glRotated(-camera.getCurrentRotation(), 0, 1, 0);
+		double currentX = camera.getCurrentX();
+		double currentZ = camera.getCurrentZ();
+		double altitude = myTerrain.altitude(currentX, currentZ);
+		gl.glTranslated(-currentX, -(2 + altitude), -currentZ);
+
 		// draw the terrain
 		drawTerrain(gl);
-		
-		
 	}
 	
 	
@@ -159,29 +166,48 @@ public class Game extends JFrame implements GLEventListener, KeyListener {
 		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
 		GLU glu = new GLU();
-		glu.gluPerspective(60,1,1,100);
-		
+		glu.gluPerspective(80, width/height, 1, 50);
 	}
 	
-    @Override
+        @Override
 	public void keyPressed(KeyEvent e) {
-		int angle = 100;
-		// TODO Auto-generated method stub
-		 switch (e.getKeyCode()) {  
-		 	case KeyEvent.VK_UP:
-            
-		 	case KeyEvent.VK_DOWN:
-			     
-				  angle  = (angle - 10) % 360;
-				  break;		
-		 default:
-			 break;
-		 }
-		 System.out.println(angle);
+    	        double xDistance;
+    	        double zDistance;
+
+    	        switch (e.getKeyCode()) {  
+    	                case KeyEvent.VK_UP:
+                               xDistance = 0.5*Math.sin(Math.toRadians(camera.getCurrentRotation()));
+                               zDistance = 0.5*Math.cos(Math.toRadians(camera.getCurrentRotation()));
+                               camera.changeCurrentX(-xDistance);
+                               camera.changeCurrentZ(-zDistance);
+		               break;
+	                case KeyEvent.VK_DOWN:
+                               xDistance = 0.5*Math.sin(Math.toRadians(camera.getCurrentRotation()));
+                               zDistance = 0.5*Math.cos(Math.toRadians(camera.getCurrentRotation()));
+		               camera.changeCurrentX(xDistance);
+                               camera.changeCurrentZ(zDistance);
+		               break;
+	                case KeyEvent.VK_LEFT:
+                               camera.changeCurrentRotation(5);
+                               break;
+	                case KeyEvent.VK_RIGHT:
+	                       camera.changeCurrentRotation(-5);
+	                       break;
+	                default:
+		               break;
+    	}
     }
+
+
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
