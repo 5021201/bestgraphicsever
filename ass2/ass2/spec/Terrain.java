@@ -130,14 +130,19 @@ public class Terrain {
      * @return
      */
     public double altitude(double x, double z) {
-        if ((int)x == x && (int)x == z) {
+    	if ((int)x == x && (int)x == z) {
         	return getGridAltitude((int)x, (int)z);
         }
+        double terrainWidth = size().getWidth();
+        double terrainHeight = size().getHeight();
+        if (x < 0 || x + 1 >= terrainWidth || z < 0 || z + 1 >= terrainHeight ) return 0.5;
+ 
         int leftX = (int)Math.floor(x);
         int rightX = leftX + 1;
         int lowerZ = (int)Math.floor(z);
         int upperZ = lowerZ + 1;
-        
+
+
         double leftAltitude = ((z - lowerZ) / (upperZ - lowerZ) * getGridAltitude(leftX,upperZ))
         		+ ((upperZ - z) / (upperZ - lowerZ) * getGridAltitude(leftX,lowerZ));
         double rightAltitude = ((z - lowerZ) / (upperZ - lowerZ) * getGridAltitude(rightX,upperZ))
